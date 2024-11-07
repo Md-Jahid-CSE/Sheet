@@ -9,7 +9,7 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -27,15 +27,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* Black overlay with transparency */
+            background-color: rgba(0, 0, 0, 0.7);
             z-index: 1;
         }
 
         .container {
-            width: 80%;
+            width: 90%;
             max-width: 700px;
             background: rgba(30, 30, 30, 0.9);
-            padding: 40px;
+            padding: 20px;
             border-radius: 20px;
             box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.8);
             text-align: center;
@@ -56,21 +56,21 @@
 
         h1 {
             color: #00FF99;
-            font-size: 40px;
-            margin-bottom: 25px;
+            font-size: 2em;
+            margin-bottom: 15px;
             text-shadow: 0 0 20px #00FF99, 0 0 30px #00FF99;
         }
 
         form {
             display: flex;
             flex-direction: column;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         input[type="text"], input[type="password"], button {
             padding: 12px;
             margin: 10px 0;
-            font-size: 16px;
+            font-size: 1em;
             border-radius: 12px;
             border: 2px solid #333;
             background-color: #222;
@@ -100,13 +100,16 @@
 
         table {
             width: 100%;
-            margin-top: 30px;
+            margin-top: 20px;
             border-collapse: collapse;
+            font-size: 0.9em;
+            overflow-x: auto;
+            display: block;
         }
 
         table, th, td {
             border: 1px solid #444;
-            padding: 15px;
+            padding: 10px;
             text-align: center;
             background-color: #bfd6c5;
         }
@@ -114,7 +117,6 @@
         th {
             background-color: #00FF99;
             color: #121212;
-            font-size: 18px;
             text-shadow: 0 0 5px #00FF99;
         }
 
@@ -131,9 +133,9 @@
             background-color: #ff4d4d;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 15px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 0.9em;
             border-radius: 8px;
             transition: all 0.3s ease-in-out;
         }
@@ -145,26 +147,42 @@
 
         .error {
             color: #ff4444;
-            font-size: 14px;
-            margin-bottom: 15px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
         }
 
         .message-box {
             color: #00FF99;
-            margin: 15px 0;
-            font-size: 18px;
+            margin: 10px 0;
+            font-size: 1em;
         }
 
         .admin-section {
             display: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            input[type="text"], input[type="password"], button {
+                font-size: 0.9em;
+            }
+            .delete-btn {
+                font-size: 0.8em;
+                padding: 8px 12px;
+            }
+            table, th, td {
+                padding: 8px;
+                font-size: 0.8em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Presentation Team Entry</h1>
-
-        <!-- Form for entering team leader, group number, and presentation title -->
         <form id="teamForm">
             <input type="text" id="teamLeader" placeholder="Enter Team Leader Name" required>
             <input type="text" id="groupNumber" placeholder="Enter Group Number" required>
@@ -172,10 +190,8 @@
             <button type="button" onclick="addTeam()">Add Team</button>
         </form>
 
-        <!-- Error message for input validation -->
         <div id="errorMessage" class="error"></div>
 
-        <!-- Table displaying the team entries -->
         <table id="teamTable">
             <tr>
                 <th>Team Leader</th>
@@ -183,20 +199,13 @@
                 <th>Presentation Title</th>
                 <th>Actions</th>
             </tr>
-            <!-- Team entries will be loaded here from localStorage -->
         </table>
 
-        <!-- Download Button for Everyone -->
         <button type="button" onclick="downloadTeams()">Download as CSV</button>
-
-        <!-- Admin Delete and Clear Buttons (hidden initially) -->
-        <input type="password" id="adminPassword" placeholder="Enter Admin Password" style="margin: 10px 0; display:none;">
-        <button type="button" onclick="deleteTeamPrompt()" style="display:none;">Delete Team</button>
-        <button type="button" onclick="clearTeamsPrompt()" style="display:none;">Clear All Entries</button>
     </div>
 
     <script>
-        const adminPassword = "Jahid@126"; // Admin password
+        const adminPassword = "Jahid@126";
 
         function addTeam() {
             const teamLeader = document.getElementById("teamLeader").value.trim();
@@ -204,18 +213,14 @@
             const presentationTitle = document.getElementById("presentationTitle").value.trim();
             const errorMessage = document.getElementById("errorMessage");
 
-            // Clear previous error messages
             errorMessage.textContent = '';
 
-            // Check if all fields are filled
             if (!teamLeader || !groupNumber || !presentationTitle) {
                 errorMessage.textContent = "All fields are required.";
                 return;
             }
 
             let teams = JSON.parse(localStorage.getItem("teams")) || [];
-
-            // Check if team already exists
             if (teams.some(team => team.leader === teamLeader && team.group === groupNumber)) {
                 errorMessage.textContent = "This team leader and group number combination already exists.";
                 return;
@@ -236,15 +241,11 @@
         function addTeamToTable(team) {
             const table = document.getElementById("teamTable");
             const newRow = table.insertRow();
-            const leaderCell = newRow.insertCell(0);
-            const groupCell = newRow.insertCell(1);
-            const presentationCell = newRow.insertCell(2);
+            newRow.insertCell(0).textContent = team.leader;
+            newRow.insertCell(1).textContent = team.group;
+            newRow.insertCell(2).textContent = team.presentation;
+
             const actionCell = newRow.insertCell(3);
-
-            leaderCell.textContent = team.leader;
-            groupCell.textContent = team.group;
-            presentationCell.textContent = team.presentation;
-
             const deleteBtn = document.createElement("button");
             deleteBtn.textContent = "Delete";
             deleteBtn.className = "delete-btn";
@@ -266,33 +267,6 @@
             }
         }
 
-        function deleteTeamPrompt() {
-            const password = prompt("Enter Admin Password to delete a team:");
-
-            if (password === adminPassword) {
-                const teamLeader = prompt("Enter the team leader's name to delete the team:");
-
-                let teams = JSON.parse(localStorage.getItem("teams")) || [];
-                teams = teams.filter(team => team.leader !== teamLeader);
-                localStorage.setItem("teams", JSON.stringify(teams));
-
-                location.reload();
-            } else {
-                alert("Incorrect password.");
-            }
-        }
-
-        function clearTeamsPrompt() {
-            const password = prompt("Enter Admin Password to clear all teams:");
-
-            if (password === adminPassword) {
-                localStorage.removeItem("teams");
-                location.reload();
-            } else {
-                alert("Incorrect password.");
-            }
-        }
-
         function downloadTeams() {
             const teams = JSON.parse(localStorage.getItem("teams")) || [];
             let csvContent = "Team Leader,Group Number,Presentation Title\n";
@@ -308,7 +282,6 @@
             link.click();
         }
 
-        // Initialize and load the teams from localStorage on page load
         loadTeams();
     </script>
 </body>
