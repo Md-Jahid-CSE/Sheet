@@ -1,13 +1,320 @@
-<form action="https://script.google.com/macros/s/AKfycbwJN10zzTqQEY2VQcK7FbwJoRDqMvnPH0qjnHPrRvmTtIl5bFGo71jVThJNL9TiyyEG/exec" method="POST">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required><br><br>
-  
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br><br>
-  
-    <label for="message">Message:</label>
-    <textarea id="message" name="message" required></textarea><br><br>
-  
-    <input type="submit" value="Submit">
-  </form>
-  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permanent Presentation Team Entry</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://images.pexels.com/photos/1049831/pexels-photo-1049831.jpeg?cs=srgb&dl=pexels-rgsk97-1049831.jpg&fm=jpg'); /* Background image */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+            z-index: 1;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 40px rgba(255, 69, 0, 0.8); /* Neon sunset glow */
+            text-align: center;
+            backdrop-filter: blur(12px);
+            z-index: 2;
+            position: relative;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            color: #FF6347; /* Neon Sunset Orange */
+            font-size: 50px;
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px #FF6347, 0 0 30px #FF6347; /* Sunset orange glow */
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"], input[type="password"], button {
+            padding: 14px;
+            margin: 12px 0;
+            font-size: 16px;
+            border-radius: 12px;
+            border: 2px solid #444;
+            background-color: #222;
+            color: white;
+            box-shadow: 0px 0px 12px rgba(255, 69, 0, 0.8); /* Neon orange sunset glow */
+            transition: all 0.3s ease-in-out;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border: 2px solid #FF4500;
+            box-shadow: 0px 0px 15px rgba(255, 69, 0, 1);
+        }
+
+        button {
+            background-color: #FF4500;
+            color: #121212;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 10px #FF4500, 0 0 20px #FF4500;
+        }
+
+        button:hover {
+            background-color: #FF6347;
+            box-shadow: 0 0 20px #FF4500, 0 0 40px #FF4500;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        table, th, td {
+            border: 1px solid #444;
+            padding: 15px;
+            text-align: center;
+            background-color: #a7a7a7;
+        }
+
+        th {
+            background-color: #FF4500; /* Neon Sunset Orange */
+            color: white;
+            font-size: 18px;
+            text-shadow: 0 0 5px #FF4500;
+        }
+
+        tr:nth-child(even) {
+            background-color: #333;
+        }
+
+        tr:hover {
+            background-color: #444;
+            box-shadow: 0 0 15px rgba(255, 69, 0, 0.8); /* Neon orange sunset glow */
+        }
+
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .delete-btn:hover {
+            background-color: #ff3333;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.7);
+        }
+
+        .error {
+            color: #FF6347; /* Light orange-red */
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .message-box {
+            color: #FF6347; /* Light orange-red */
+            margin: 15px 0;
+            font-size: 18px;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .footer {
+            color: white;
+            background-color: #121212; /* Dark background for footer */
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer a {
+            color: #FF6347; /* Sunset orange link color */
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Presentation Team Entry</h1>
+
+        <!-- Form for entering team leader, group number, and presentation title -->
+        <form id="teamForm">
+            <input type="text" id="teamLeader" placeholder="Enter Team Leader Name" required>
+            <input type="text" id="groupNumber" placeholder="Enter Group Number" required>
+            <input type="text" id="presentationTitle" placeholder="Enter Presentation Title" required>
+            <button type="button" onclick="addTeam()">Add Team</button>
+        </form>
+
+        <!-- Error message for input validation -->
+        <div id="errorMessage" class="error"></div>
+
+        <!-- Table displaying the team entries -->
+        <table id="teamTable">
+            <tr>
+                <th>Team Leader</th>
+                <th>Group Number</th>
+                <th>Presentation Title</th>
+                <th>Actions</th>
+            </tr>
+            <!-- Team entries will be loaded here from localStorage -->
+        </table>
+
+        <!-- Download Button for Everyone -->
+        <button type="button" onclick="downloadTeams()">Download as CSV</button>
+
+        <!-- Admin Delete and Clear Buttons (hidden initially) -->
+        <input type="password" id="adminPassword" placeholder="Enter Admin Password" style="margin: 10px 0; display:none;">
+        <button type="button" onclick="deleteTeamPrompt()" style="display:none;">Delete Team</button>
+        <button type="button" onclick="clearTeamsPrompt()" style="display:none;">Clear All Entries</button>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>Created by <a href="#">JAHID HASAN</a> | Pray for me</p>
+    </div>
+
+    <script>
+        const adminPassword = "Jahid@126"; // Updated Admin password
+
+        function addTeam() {
+            const teamLeader = document.getElementById("teamLeader").value.trim();
+            const groupNumber = document.getElementById("groupNumber").value.trim();
+            const presentationTitle = document.getElementById("presentationTitle").value.trim();
+            const errorMessage = document.getElementById("errorMessage");
+
+            // Clear previous error messages
+            errorMessage.textContent = '';
+
+            // Check if all fields are filled
+            if (!teamLeader || !groupNumber || !presentationTitle) {
+                errorMessage.textContent = "All fields are required.";
+                return;
+            }
+
+            let teams = JSON.parse(localStorage.getItem("teams")) || [];
+
+            // Check if team already exists
+            if (teams.some(team => team.leader === teamLeader && team.group === groupNumber)) {
+                errorMessage.textContent = "This team leader and group number combination already exists.";
+                return;
+            }
+
+            const newTeam = { leader: teamLeader, group: groupNumber, presentation: presentationTitle };
+            teams.push(newTeam);
+            localStorage.setItem("teams", JSON.stringify(teams));
+            addTeamToTable(newTeam);
+            document.getElementById("teamForm").reset();
+        }
+
+        function loadTeams() {
+            const teams = JSON.parse(localStorage.getItem("teams")) || [];
+            teams.forEach(addTeamToTable);
+        }
+
+        function addTeamToTable(team) {
+            const table = document.getElementById("teamTable");
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>${team.leader}</td>
+                <td>${team.group}</td>
+                <td>${team.presentation}</td>
+                <td><button class="delete-btn" onclick="deleteTeam(${table.rows.length - 1})">Delete</button></td>
+            `;
+        }
+
+        function deleteTeam(index) {
+            let teams = JSON.parse(localStorage.getItem("teams"));
+            teams.splice(index - 1, 1); // Remove the team
+            localStorage.setItem("teams", JSON.stringify(teams));
+            location.reload(); // Reload to reflect changes
+        }
+
+        function downloadTeams() {
+            const teams = JSON.parse(localStorage.getItem("teams")) || [];
+            let csvContent = "Team Leader,Group Number,Presentation Title\n";
+            teams.forEach(team => {
+                csvContent += `${team.leader},${team.group},${team.presentation}\n`;
+            });
+
+            const hiddenElement = document.createElement('a');
+            hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);
+            hiddenElement.target = '_blank';
+            hiddenElement.download = 'teams.csv';
+            hiddenElement.click();
+        }
+
+        function deleteTeamPrompt() {
+            const password = document.getElementById("adminPassword").value;
+            if (password === adminPassword) {
+                let teams = JSON.parse(localStorage.getItem("teams"));
+                teams.pop();
+                localStorage.setItem("teams", JSON.stringify(teams));
+                location.reload();
+            } else {
+                alert("Incorrect password!");
+            }
+        }
+
+        function clearTeamsPrompt() {
+            const password = document.getElementById("adminPassword").value;
+            if (password === adminPassword) {
+                localStorage.removeItem("teams");
+                location.reload();
+            } else {
+                alert("Incorrect password!");
+            }
+        }
+
+        // Initialize page by loading stored teams
+        window.onload = loadTeams;
+    </script>
+</body>
+</html>
