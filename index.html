@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEE1163 Marks Lookup</title>
+    <style>
+        /* Global reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(45deg, #1c1c29, #313c51);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            color: #f4f4f4;
+        }
+
+        /* Container styling */
+        .container {
+            background: #1e2a34;
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 600px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideIn 1s ease-out;
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 50px rgba(255, 111, 97, 0.3);
+        }
+
+        /* Header styling */
+        h2 {
+            color: #ff6f61;
+            font-size: 2.8em;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+
+        /* Input styling */
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #303d4d;
+            background: #2f3b47;
+            color: #ecf0f1;
+            border-radius: 10px;
+            font-size: 1.1em;
+            outline: none;
+            box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.3);
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #ff6f61;
+            box-shadow: 0 0 12px rgba(255, 111, 97, 0.7);
+        }
+
+        /* Button styling */
+        button {
+            padding: 15px 25px;
+            background: linear-gradient(45deg, #ff6f61, #ff3b39);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 111, 97, 0.5);
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(255, 111, 97, 0.7);
+        }
+
+        /* Result display */
+        .result {
+            margin-top: 20px;
+            background: #2f3b47;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(255, 111, 97, 0.2);
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result p {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        /* Demo section */
+        .demo {
+            margin-top: 25px;
+            font-size: 1.2em;
+            color: #f0f0f0;
+            text-align: center;
+            border-top: 1px solid #f4f4f4;
+            padding-top: 15px;
+        }
+
+        .demo strong {
+            color: #ff6f61;
+        }
+
+        /* Footer credit */
+        .credit {
+            margin-top: 20px;
+            font-size: 1.1em;
+            text-align: center;
+            color: #f0f0f0;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 30px;
+            }
+
+            h2 {
+                font-size: 2.3em;
+            }
+
+            button {
+                padding: 12px 20px;
+            }
+
+            input[type="text"] {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>EEE1163 Marks Lookup</h2>
+        <input type="text" id="fullName" placeholder="Enter Full Name" />
+        <input type="text" id="studentId" placeholder="Enter Student ID" />
+        <button onclick="lookupMarks()">Lookup</button>
+        <div class="result" id="result"></div>
+
+        <div class="demo">
+            <p><strong>Demo:</strong> Try <strong>Md. Jahid Hasan</strong> with ID <strong>0802420205101126</strong></p>
+        </div>
+
+        <div class="credit">Created by Jahid Hasan</div>
+    </div>
+
+    <script>
+const marksData = {
+    "NAFIS HASAN ABID": { id: "0802420205101100", ct1: 6, ct2: 4, mid: 15, attendance: 14 },
+    "MST. MOMITA JAMAN MOMO": { id: "0802420105101101", ct1: 20, ct2: 7, mid: 16, attendance: 14 },
+    "MST. MARJIA MEHEJABIN": { id: "0802420105101102", ct1: 10, ct2: 4, mid: 17, attendance: 14 },
+    "MD. SAYADUL ISLAM": { id: "0802420405101103", ct1: 6, ct2: 3, mid: 15, attendance: 15 },
+    "JAHIN AFIFA SADIA": { id: "0802420105101104", ct1: 20, ct2: 4, mid: 14, attendance: 15 },
+    "ALL SHAHRIAR RAHMAN ROKON": { id: "0802420205101105", ct1: 12, ct2: 5, mid: 12, attendance: 11 },
+    "MD. AYMAN ABID SEYAM": { id: "0802420405101106", ct1: 14, ct2: "A", mid: 17, attendance: 12 },
+    "MOST. FARHA TABASSUM ANANNA": { id: "0802420105101107", ct1: 8, ct2: 10, mid: 14, attendance: 17 },
+    "MOST. FARIHA TABASSUM ANU": { id: "0802420105101108", ct1: 8, ct2: 2, mid: 14, attendance: 17 },
+    "NUSRAT JAHAN JUI": { id: "0802420105101109", ct1: 9, ct2: 2, mid: 15, attendance: 10 },
+    "MD. JAODAT AKIB SHIFAT": { id: "0802420205101111", ct1: 10, ct2: 3, mid: 26, attendance: 8 },
+    "SHAH MD. AL JUNAID": { id: "0802420205101112", ct1: "A", ct2: 12, mid: 30, attendance: 15 },
+    "SHIDRATUL MUNTAHA": { id: "0802420105101113", ct1: 14, ct2: 5, mid: 22, attendance: 15 },
+    "FARHANA BENTE HUSSIN SAYDA": { id: "0802420105101114", ct1: 14, ct2: 8, mid: 26, attendance: 16 },
+    "JANNATUL MAOWA JEBA": { id: "0802420105101115", ct1: 15, ct2: 8, mid: 19, attendance: 14 },
+    "MD. SIMUM HASSAN SIYAM": { id: "0802420205101116", ct1: 0, ct2: "A", mid: 6, attendance: 7 },
+    "MD. SANZID HASAN": { id: "0802420205101118", ct1: 14, ct2: 3, mid: 27, attendance: 16 },
+    "ASHRIA JAHAN PRIONTY": { id: "0802420105101119", ct1: 8, ct2: 10, mid: 12, attendance: 12 },
+    "MUNTASERA TABASSUM LOPA": { id: "0802420105101120", ct1: "A", ct2: 15, mid: 24, attendance: 13 },
+    "ARHAM HABIB RAFI": { id: "0802420205101121", ct1: 12, ct2: 0, mid: 12, attendance: 14 },
+    "MST. RIFA TAMANNA": { id: "0802420105101122", ct1: 16, ct2: 6, mid: 27, attendance: 17 },
+    "MD. TANJIMUL ISLAM TAMIM": { id: "0802420205101123", ct1: 7, ct2: 13, mid: 21, attendance: 17 },
+    "MD. TOUHID IBNA MIZAN ANIK": { id: "0802420405101124", ct1: 0, ct2: 3, mid: 14, attendance: 12 },
+    "MD. ABDUS SHAFI TAHMID": { id: "0802420405101125", ct1: 11, ct2: 12, mid: 23, attendance: 16 },
+    "MD. JAHID HASAN": { id: "0802420205101126", ct1: 19, ct2: 10, mid: 33, attendance: 16 },
+    "DISHA ROY TRIPTY": { id: "0802420105101127", ct1: 3, ct2: 8, mid: 12, attendance: 16 },
+    "MD. RAHIB SABAB SHIFAT": { id: "0802420205101128", ct1: 12, ct2: 2, mid: 8, attendance: 13 },
+    "SHAH MD. RIAZUL ISLAM": { id: "0802420205101130", ct1: 12, ct2: 7, mid: 20, attendance: 16 },
+    "MD. FARHAN ALAM": { id: "0802420205101131", ct1: 12, ct2: 9, mid: 26, attendance: 15 },
+    "TANUSHREE ROY": { id: "0802420105101132", ct1: 16, ct2: 15, mid: 41, attendance: 17 },
+    "MD. MAHMUDUL ISLAM SABUZ": { id: "0802420405101133", ct1: 12, ct2: 2, mid: 19, attendance: 15 },
+    "MD. TANVIR ISLAM MASUM": { id: "0802420405101134", ct1: 20, ct2: 2, mid: 31, attendance: 16 },
+    "MRINMOYE RAHMAN": { id: "0802420105101135", ct1: 14, ct2: 16, mid: 35, attendance: 17 },
+    "ABDULLAH - AL GALIB TONMOY": { id: "0802420205101136", ct1: 12, ct2: 2, mid: 21, attendance: 14 },
+    "MD. SAJOL HASSAN": { id: "0802420205101137", ct1: 14, ct2: 0, mid: 3, attendance: 16 },
+    "A. S. M. SAYEM": { id: "0802420205101138", ct1: 10, ct2: 12, mid: 20, attendance: 16 },
+    "MD. ELIAS AHMAD": { id: "0802420405101139", ct1: 0, ct2: 0, mid: 2, attendance: 10 },
+    "MD. SEYAM ALI": { id: "0802420205101140", ct1: 17, ct2: 10, mid: 10, attendance: 11 },
+    "FARHANA TABASSUM PROME": { id: "0802420105101141", ct1: "A", ct2: 12, mid: 29, attendance: 16 },
+    "NAORIN TABASSUM": { id: "0802420105101142", ct1: 16, ct2: "A", mid: 30, attendance: 7 },
+    "MD MONIRUZZAMAN MONIR": { id: "0802420205101143", ct1: 20, ct2: 9, mid: 31, attendance: 8 },
+    "SHIRATUL BASHAR": { id: "0802420205101144", ct1: 0, ct2: "A", mid: 5, attendance: 4 },
+    "BINIKA SARKAR TONUSHREE": { id: "0802410105101001", ct1: 13, ct2: 13, mid: 20, attendance: 14 },
+    "S.M. MAHBUB MOURSHED SIAM": { id: "0802410205101012", ct1: 0, ct2: "A", mid: 30, attendance: 16 },
+    "MD. REZUWAN TAHMED": { id: "0802410205101040", ct1: 6, ct2: "A", mid: 10, attendance: 6 },
+    "MA SARWAR HRIDOY": { id: "0802410205101042", ct1: 12, ct2: "A", mid: 0, attendance: 8 },
+    "TANZIM MASHRUR TASHIN": { id: "0802410205101076", ct1: 6, ct2: 0, mid: 5, attendance: 15 },
+    "MD. SADEQUL ISLAM SAJEEB": { id: "0802410205101078", ct1: 2, ct2: 10, mid: 21, attendance: 15 },
+    "MD. MOINUDDIN AHAMMED SAYEM": { id: "0802320205101034", ct1: "A", ct2: "A", mid: 2, attendance: 0 },
+    "MD. RIFAT HOSSEN": { id: "0802320405101084", ct1: 19, ct2: 10, mid: 31, attendance: 5 },
+    "DHRUBO JYOTI BARMAN": { id: "0802320205101077", ct1: "A", ct2: "A", mid: 8, attendance: 0 }
+};
+
+function lookupMarks() {
+    const fullName = document.getElementById('fullName').value.trim().toUpperCase();
+    const studentId = document.getElementById('studentId').value.trim();
+
+    if (marksData[fullName] && marksData[fullName].id.toUpperCase() === studentId.toUpperCase()) {
+        const student = marksData[fullName];
+        document.getElementById('result').innerHTML = `
+            <p><strong>Full Name:</strong> ${fullName}</p>
+            <p><strong>Student ID:</strong> ${student.id}</p>
+            <p><strong>CT1 Marks (Out of 20):</strong> ${student.ct1}</p>
+            <p><strong>CT2 Marks (Out of 20):</strong> ${student.ct2}</p>
+            <p><strong>Midterm Marks (Out of 45):</strong> ${student.mid}</p>
+            <p><strong>Attendance (Out of 17):</strong> ${student.attendance}</p>
+        `;
+    } else {
+        document.getElementById('result').innerHTML = "<p style='color:red;'>No data found for the given name or ID.</p>";
+    }
+}
+    </script>
+</body>
+</html>
