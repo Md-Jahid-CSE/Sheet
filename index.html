@@ -13,7 +13,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: url('https://media.istockphoto.com/id/1197239452/photo/fern-leaves-on-dark-background-in-jungle-dense-dark-green-fern-leaves-in-garden-at-night.jpg?s=612x612&w=0&k=20&c=-fT1-Y4drWnWrxQRYAnUJAKvVfuQa55Iput1dhTBnL4='); /* Add your image URL here */
+            background-image: url('https://media.istockphoto.com/id/1197239452/photo/fern-leaves-on-dark-background-in-jungle-dense-dark-green-fern-leaves-in-garden-at-night.jpg?s=612x612&w=0&k=20&c=-fT1-Y4drWnWrxQRYAnUJAKvVfuQa55Iput1dhTBnL4=');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -67,7 +67,7 @@
             margin-bottom: 20px;
         }
 
-        input[type="text"], input[type="password"], button {
+        input[type="text"], button {
             padding: 12px;
             margin: 10px 0;
             font-size: 1em;
@@ -79,7 +79,7 @@
             transition: all 0.3s ease-in-out;
         }
 
-        input[type="text"]:focus, input[type="password"]:focus {
+        input[type="text"]:focus {
             outline: none;
             border: 2px solid #00FF99;
             box-shadow: 0px 0px 15px rgba(0, 255, 153, 1);
@@ -157,16 +157,12 @@
             font-size: 1em;
         }
 
-        .admin-section {
-            display: none;
-        }
-
         /* Responsive adjustments */
         @media (max-width: 600px) {
             h1 {
                 font-size: 1.5em;
             }
-            input[type="text"], input[type="password"], button {
+            input[type="text"], button {
                 font-size: 0.9em;
             }
             .delete-btn {
@@ -207,7 +203,19 @@
     <script>
         const adminPassword = "Jahid@126";
 
-        function addTeam() {
+        async function loadTeams() {
+            const response = await fetch('http://localhost:3000/teams');
+            const teams = await response.json();
+            document.getElementById("teamTable").innerHTML = `<tr>
+                <th>Team Leader</th>
+                <th>Group Number</th>
+                <th>Presentation Title</th>
+                <th>Actions</th>
+            </tr>`;
+            teams.forEach(addTeamToTable);
+        }
+
+        async function addTeam() {
             const teamLeader = document.getElementById("teamLeader").value.trim();
             const groupNumber = document.getElementById("groupNumber").value.trim();
             const presentationTitle = document.getElementById("presentationTitle").value.trim();
@@ -220,22 +228,43 @@
                 return;
             }
 
-            let teams = JSON.parse(localStorage.getItem("teams")) || [];
-            if (teams.some(team => team.leader === teamLeader && team.group === groupNumber)) {
-                errorMessage.textContent = "This team leader and group number combination already exists.";
-                return;
+            try {
+                const response = await fetch('http://localhost:3000/teams', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ leader: teamLeader, group: groupNumber, presentation: presentationTitle })
+                });
+                if (!response.ok) {
+                    const error = await response.json();
+                    errorMessage.textContent = error.error;
+                    return;
+                }
+                await loadTeams();
+                document.getElementById("teamForm").reset();
+            } catch (error) {
+                console.error("Error:", error);
             }
-
-            const newTeam = { leader: teamLeader, group: groupNumber, presentation: presentationTitle };
-            teams.push(newTeam);
-            localStorage.setItem("teams", JSON.stringify(teams));
-            addTeamToTable(newTeam);
-            document.getElementById("teamForm").reset();
         }
 
-        function loadTeams() {
-            const teams = JSON.parse(localStorage.getItem("teams")) || [];
-            teams.forEach(addTeamToTable);
+        async function deleteTeam(leader, group, row) {
+            const password = prompt("Enter Admin Password to delete this entry:");
+
+            try {
+                const response = await fetch('http://localhost:3000/teams', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ leader, group, password })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    row.remove();
+                    alert(result.message);
+                } else {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
         }
 
         function addTeamToTable(team) {
@@ -245,41 +274,12 @@
             newRow.insertCell(1).textContent = team.group;
             newRow.insertCell(2).textContent = team.presentation;
 
-            const actionCell = newRow.insertCell(3);
-            const deleteBtn = document.createElement("button");
-            deleteBtn.textContent = "Delete";
-            deleteBtn.className = "delete-btn";
-            deleteBtn.onclick = () => deleteTeam(team.leader, team.group, newRow);
-            actionCell.appendChild(deleteBtn);
-        }
-
-        function deleteTeam(leader, group, row) {
-            const password = prompt("Enter Admin Password to delete this entry:");
-
-            if (password === adminPassword) {
-                let teams = JSON.parse(localStorage.getItem("teams")) || [];
-                teams = teams.filter(team => !(team.leader === leader && team.group === group));
-                localStorage.setItem("teams", JSON.stringify(teams));
-                row.remove();
-                alert("Team deleted successfully.");
-            } else {
-                alert("Incorrect password.");
-            }
-        }
-
-        function downloadTeams() {
-            const teams = JSON.parse(localStorage.getItem("teams")) || [];
-            let csvContent = "Team Leader,Group Number,Presentation Title\n";
-
-            teams.forEach(team => {
-                csvContent += `${team.leader},${team.group},${team.presentation}\n`;
-            });
-
-            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "teams.csv";
-            link.click();
+            const actionsCell = newRow.insertCell(3);
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.className = "delete-btn";
+            deleteButton.onclick = () => deleteTeam(team.leader, team.group, newRow);
+            actionsCell.appendChild(deleteButton);
         }
 
         loadTeams();
